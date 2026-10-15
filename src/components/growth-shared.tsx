@@ -1,0 +1,7 @@
+import { Link } from '@tanstack/react-router';
+import { ArrowLeft, Check, FlaskConical } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+export function Steps({ current }: { current: number }) { return <div className="steps" aria-label="Setup progress">{['Discover the gap', 'Choose a template', 'Review & approve', 'Demo complete'].map((label,i) => <div key={label} style={{ display:'contents' }}>{i > 0 && <span className="step-line"/>}<div className={`step ${i === current ? 'current' : i < current ? 'done' : ''}`} aria-current={i === current ? 'step' : undefined}><span className="step-number">{i < current ? <Check size={12}/> : i+1}</span>{label}</div></div>)}</div>; }
+export function Back({ to, children }: { to: '/' | '/dashboard' | '/recommendation' | '/templates' | '/review'; children: React.ReactNode }) { return <Button variant="ghost" asChild className="back-link"><Link to={to}><ArrowLeft size={13}/>{children}</Link></Button>; }
+export function DemoNote() { return <div className="disclaimer"><FlaskConical size={13}/><span>Demo · Fictional data. No accounts connected, messages sent, or live workflows activated.</span></div>; }
+export function pageHead(title: string, description: string) { return { meta: [{title:`${title} · Growth Gap Detective | Cheerio AI`},{name:'description',content:description},{property:'og:title',content:`${title} · Growth Gap Detective`},{property:'og:description',content:description},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}] }; }

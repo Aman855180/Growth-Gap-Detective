@@ -1,0 +1,25 @@
+import { useState, type ReactNode } from 'react';
+import { Link, useRouterState } from '@tanstack/react-router';
+import { ArrowUpRight, Bell, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, FlaskConical, LayoutDashboard, Leaf, Menu, Search, Settings2, Sparkles, Workflow, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+const nav = [ { name: 'Overview', path: '/dashboard', icon: LayoutDashboard }, { name: 'Growth Gap Detective', path: '/recommendation', icon: Sparkles }, { name: 'Workflow templates', path: '/templates', icon: Workflow } ] as const;
+export function GrowthShell({ children }: { children: ReactNode }) {
+  const pathname = useRouterState({ select: s => s.location.pathname });
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobile, setMobile] = useState(false);
+  const [panel, setPanel] = useState<string | null>(null);
+  if (pathname === '/') return <>{children}</>;
+  return <div className={`app-shell ${collapsed ? 'is-collapsed' : ''} ${mobile ? 'mobile-open' : ''}`}>
+    <aside className="sidebar">
+      <Link to="/dashboard" className="brand"><span className="brand-symbol">c<span>✳</span></span><span className="sidebar-label">cheerio<span className="brand-ai"> AI</span></span></Link>
+      <div className="workspace"><span className="workspace-avatar"><Leaf size={20}/></span><span className="sidebar-label"><strong>GlowNest Skincare</strong><small>Brand workspace</small></span><ChevronDown size={15} className="sidebar-label"/></div>
+      <div className="nav-section sidebar-label">WORKSPACE</div>
+      <nav aria-label="Main navigation">{nav.map(n => <Button key={n.path} variant="ghost" asChild className={`nav-item ${(n.path === '/dashboard' ? pathname === '/dashboard' : n.path === '/recommendation' ? pathname === '/recommendation' : ['/templates', '/review', '/success'].includes(pathname)) ? 'nav-active' : ''}`}><Link to={n.path} title={n.name} onClick={() => setMobile(false)}><n.icon size={19}/><span className="sidebar-label">{n.name}</span>{n.path === '/recommendation' && <span className="nav-dot sidebar-label"/>}</Link></Button>)}</nav>
+      <div className="sidebar-note sidebar-label"><span className="note-icon"><Sparkles size={17}/></span><strong>A little nudge. A big leap.</strong><p>Turn everyday activity into your next growth opportunity.</p><Button variant="ghost" asChild><Link to="/recommendation">Explore your growth gap <ArrowUpRight size={15}/></Link></Button></div>
+      <div className="sidebar-bottom"><Button variant="ghost" className="nav-item" onClick={() => setPanel('Workspace settings')} title="Workspace settings"><Settings2 size={18}/><span className="sidebar-label">Settings</span></Button><Button variant="ghost" className="nav-item" onClick={() => setPanel('Help & support')} title="Help and support"><CircleHelp size={18}/><span className="sidebar-label">Help & support</span><ArrowUpRight size={15} className="sidebar-label"/></Button><div className="sidebar-user"><span className="user-avatar">AK</span><span className="sidebar-label"><strong>Aman Kumar</strong><small>Workspace owner · Fictional</small></span><Button variant="ghost" size="icon" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>{collapsed ? <ChevronRight/> : <ChevronLeft/>}</Button></div></div>
+    </aside>
+    <div className="app-main"><header className="topbar"><div className="topbar-path"><Button variant="ghost" size="icon" className="mobile-menu" onClick={() => setMobile(!mobile)} aria-label="Toggle navigation"><Menu/></Button><span>Workspace</span><ChevronRight size={14}/><strong>{pathname === '/dashboard' ? 'Overview' : 'Growth Gap Detective'}</strong></div><div className="topbar-actions"><span className="demo-badge"><FlaskConical size={13}/> Demo · Fictional data</span><Button variant="ghost" size="icon" aria-label="Notifications" onClick={() => setPanel('Notifications')}><Bell size={18}/></Button><span className="user-avatar small">AK</span></div></header><main className="page-content">{children}</main><footer className="page-footer"><span><FlaskConical size={13}/> All customer data is fictional. No real accounts or messages.</span><span>Made for a little more growth <span className="footer-star">✳</span></span></footer></div>
+    {panel && <div className="modal-backdrop" onClick={() => setPanel(null)}><section className="modal" role="dialog" aria-modal="true" aria-label={panel} onClick={e => e.stopPropagation()}><div className="section-heading"><h2>{panel}</h2><Button variant="ghost" size="icon" onClick={() => setPanel(null)} aria-label="Close dialog"><X/></Button></div>{panel === 'Notifications' ? <p>You’re all caught up. Your follow-up recommendation is ready to review.</p> : panel === 'Workspace settings' ? <><p>GlowNest Skincare · Fictional demo workspace</p><p>Account connections and live sending are disabled in this prototype.</p></> : <p>Need help with your next step? Review your recommendation, choose a template, and approve your demo workflow.</p>}<Button onClick={() => setPanel(null)}>Got it</Button></section></div>}
+  </div>;
+}
